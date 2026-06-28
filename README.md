@@ -59,6 +59,10 @@ colabctl cp train.py :/content/train.py          # upload
 #   colabctl exec <id> <<< '!tar czf /content/out.tgz -C /content/model .'
 #   colabctl cp :content/out.tgz ./out.tgz
 
+# Manage sessions
+colabctl sessions
+colabctl stop ID
+
 # Check auth status
 colabctl auth status
 
@@ -84,3 +88,25 @@ End a line with `\` to continue on the next line:
 2. `list` queries the Google Drive API v3 for files with MIME type `application/vnd.google.colaboratory`.
 3. `run` / `exec` calls the Colab session API (`POST /api/sessions`) to start a runtime, then connects to the Jupyter kernel over WebSocket using the Jupyter wire protocol (v5) to send `execute_request` messages and stream back output.
 4. `cp` uses the Jupyter Contents API (`/api/contents`) over the runtime proxy to download or upload a single file. Paths are relative to the Jupyter server root. Directories are not handled directly; archive them on the runtime (`tar`) and copy the archive.
+
+## Examples
+
+Run GPU benchmark:
+
+```sh
+$ cat examples/torch_gpu_benchmark.py | colabctl exec ID --accelerator T4
+
+Device: Tesla T4
+Torch : 2.11.0+cu128
+4096x4096 matmul: 32.98 ms/iter, 4.2 TFLOP/s (fp32)
+```
+
+Generate an image from a text prompt using SD-Turbo:
+
+```sh
+cat examples/txt2img.py | colabctl exec ID --accelerator T4 -o examples
+```
+
+![fluffy-creature](./examples/a_hyper_detailed_ultra_fluffy_fantasy_cr.png)
+
+SD-Turbo is about 2.5 GB and loads only on the first call; because the kernel persists between `exec` calls, later prompts reuse the loaded pipeline and finish in a second or two.
