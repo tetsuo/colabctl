@@ -1,6 +1,6 @@
 # colabctl
 
-A command-line client for Google Colab written in Go.
+A command-line client for [Google Colab](https://colab.research.google.com/) written in Go.
 
 It lets you list, run, and interact with your notebooks from the terminal.
 
@@ -84,7 +84,3 @@ End a line with `\` to continue on the next line:
 2. `list` queries the Google Drive API v3 for files with MIME type `application/vnd.google.colaboratory`.
 3. `run` / `exec` calls the Colab session API (`POST /api/sessions`) to start a runtime, then connects to the Jupyter kernel over WebSocket using the Jupyter wire protocol (v5) to send `execute_request` messages and stream back output.
 4. `cp` uses the Jupyter Contents API (`/api/contents`) over the runtime proxy to download or upload a single file. Paths are relative to the Jupyter server root. Directories are not handled directly; archive them on the runtime (`tar`) and copy the archive.
-
-## License
-
-MIT
